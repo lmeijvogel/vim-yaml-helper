@@ -6,6 +6,9 @@
 " This only counts lines that start with a letter, so comments and
 " empty lines will be skipped.
 function! s:GoToParent()
+  " Store this position in the jump list
+  mark '
+
   " Find the current indent
   call s:MoveToParent()
 
