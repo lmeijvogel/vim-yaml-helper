@@ -54,7 +54,7 @@ endfunction
 
 " Given a key, go to the corresponding entry.
 " If the key doesn't exist in the document, the search stops at the closest
-" existing parent.
+" existing ancestor.
 "
 " This method also works in ActiveRecord-style translation files: If a key
 " cannot be found, it tries again including the toplevel node. For example:
