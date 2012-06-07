@@ -39,6 +39,11 @@ function! s:GetFullPath()
 
   call reverse(keys)
 
+  " This is done to work with Rails translations: The yaml file contains a
+  " toplevel node (e.g. 'en') that should not end up in any I18n::translate
+  " call arguments.
+  call s:OptionallyRemoveToplevelNode(keys)
+
   let result = join(keys, ".")
 
   call setpos(".", startPosition)
@@ -185,6 +190,22 @@ function! s:OptionallyAddToplevelNode( keyParts )
 
     if (toplevelNode != a:keyParts[0])
       call insert(a:keyParts, toplevelNode)
+    endif
+  endif
+endfunction
+
+" Remove the toplevel node if there's only one in the document.
+" It does not change the cursor position.
+"
+" It assumes that the toplevel node is at the start of the list
+function! s:OptionallyRemoveToplevelNode( keyParts )
+  let toplevelNodes = s:GetNodesWithIndent(0)
+
+  if len(toplevelNodes) == 1
+    let toplevelNode = toplevelNodes[0]
+
+    if a:keyParts[0] == toplevelNode
+      call remove(a:keyParts, 0)
     endif
   endif
 endfunction
