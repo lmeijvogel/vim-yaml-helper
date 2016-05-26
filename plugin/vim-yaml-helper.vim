@@ -250,6 +250,6 @@ function! s:GetNodesWithIndent( indent )
   return result
 endfunction
 
-command! YamlGoToParent call s:GoToParent()
-command! YamlGetFullPath call s:GetFullPath()
+command! YamlParent call s:GoToParent()
+command! YamlFullPath call s:GetFullPath()
 command! -nargs=1 YamlGoToKey call s:GoToKey("<args>")
