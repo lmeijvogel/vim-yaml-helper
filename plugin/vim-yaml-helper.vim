@@ -12,7 +12,7 @@ function! s:GoToParent()
   " Find the current indent
   call s:MoveToParent()
 
-  call search("\\a", "Wc", line("."))
+  call search("\\S", "Wc", line("."))
 endfunction
 
 " Get the full Yaml path of the current line.
@@ -140,7 +140,7 @@ function! s:MakeIndentRegex(matchSizes, indent, ...)
   if a:0 > 0
     let text = a:1 .":"
   else
-    let text = "\\a[^ ]"
+    let text = "\\S[^ ]"
   endif
 
   if a:matchSizes == "smaller"
