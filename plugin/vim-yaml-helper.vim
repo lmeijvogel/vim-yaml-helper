@@ -95,14 +95,14 @@ endfunction
 function! s:MoveToChildKey( key, currentIndent )
   " Determine where we'll need to stop searching (when the first sibling
   " is found, we don't have to look further)
-  let firstSiblingRegex = s:MakeIndentRegex("equal", a:currentIndent)
+  let firstSiblingRegex = s:MakeIndentRegex("==", a:currentIndent)
   let siblingLineNumber = search(firstSiblingRegex, "Wn")
 
   " Now look for a corresponding child node between the current position
   " and the next sibling
   let childrenIndent = s:DetermineChildrenIndent(siblingLineNumber)
 
-  let wantedChildRegex = s:MakeIndentRegex("equal", childrenIndent, a:key)
+  let wantedChildRegex = s:MakeIndentRegex("==", childrenIndent, a:key)
   let foundChild = search(wantedChildRegex, "W", siblingLineNumber)
 
   return childrenIndent
@@ -115,7 +115,7 @@ function! s:MoveToParent()
     return 0
   endif
 
-  let parentRegex = s:MakeIndentRegex("smaller", indent)
+  let parentRegex = s:MakeIndentRegex("<", indent)
 
   return (search(parentRegex, "bW") != 0)
 endfunction
@@ -143,18 +143,20 @@ function! s:MakeIndentRegex(matchSizes, indent, ...)
     let text = "\\S[^ ]"
   endif
 
-  if a:matchSizes == "smaller"
+  if a:matchSizes == "<"
     let min = ""
     let max = a:indent-1
-  elseif a:matchSizes == "larger"
+  elseif a:matchSizes == ">"
     let min = a:indent+1
     let max = ""
-  elseif a:matchSizes == "equal"
+  elseif a:matchSizes == "=="
     let min = a:indent
     let max = min
   endif
 
-  return "^ \\{". min .",". max ."}".text
+  let result = "^ \\{". min .",". max ."}".text
+  let @@ = result
+  return result
 endfunction
 
 " Move the cursor to the first toplevel node.
@@ -162,7 +164,7 @@ endfunction
 function! s:FindFirstKey( key )
   call cursor(1,1)
 
-  let regex = s:MakeIndentRegex("larger", -1, a:key)
+  let regex = s:MakeIndentRegex(">", -1, a:key)
 
   let matchPosition = search(regex, "Wc")
 
@@ -176,7 +178,7 @@ function! s:DetermineChildrenIndent( stopLine )
   let currentIndent = s:GetCurrentIndent()
 
   " First get the first child to determine what indentation we want to find
-  let candidateChildRegex = s:MakeIndentRegex("larger", currentIndent)
+  let candidateChildRegex = s:MakeIndentRegex(">", currentIndent)
 
   " Since we might find empty lines, search all the way to the first sibling
   let firstChildLine = search(candidateChildRegex, "Wn", a:stopLine)
@@ -228,7 +230,7 @@ function! s:GetNodesWithIndent( indent )
   call cursor(1,1)
 
   let result = []
-  let regex = s:MakeIndentRegex("equal", a:indent)
+  let regex = s:MakeIndentRegex("==", a:indent)
 
   " Poor man's do-while loop :)
   let matchAtCurrentLine = search(regex, "Wc")
