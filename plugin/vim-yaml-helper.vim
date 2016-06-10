@@ -127,7 +127,7 @@ endfunction
 function! s:GetCurrentKey()
   let currentLine = getline(".")
 
-  let keyRegex = "^ *\\(.\\{-\\}\\):"
+  let keyRegex = "^ *[\"']\\?\\(.\\{-\\}\\)[\"']\\?:"
 
   let matches = matchlist(currentLine, keyRegex)
 
@@ -138,7 +138,7 @@ endfunction
 
 function! s:MakeIndentRegex(matchSizes, indent, ...)
   if a:0 > 0
-    let text = a:1 .":"
+    let text = "['\"]\\?". a:1 ."['\"]\\?:"
   else
     let text = "\\S[^ ]"
   endif
@@ -162,8 +162,11 @@ endfunction
 function! s:FindFirstKey( key )
   call cursor(1,1)
 
-  let regex = s:MakeIndentRegex("equal", 0, a:key)
+  let regex = s:MakeIndentRegex("larger", -1, a:key)
+
   let matchPosition = search(regex, "Wc")
+
+  echo matchPosition
 
   return matchPosition != 0
 endfunction
