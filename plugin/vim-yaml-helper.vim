@@ -37,6 +37,11 @@ function! s:GetFullPath()
     let key = s:GetCurrentKey()
   endwhile
 
+  if len(keys) == 0
+    echo ""
+    return
+  endif
+
   call reverse(keys)
 
   " This is done to work with Rails translations: The yaml file contains a
@@ -130,8 +135,11 @@ function! s:GetCurrentKey()
   let keyRegex = "^ *\\(.\\{-\\}\\):"
 
   let matches = matchlist(currentLine, keyRegex)
-
-  let key = matches[1]
+  try
+    let key = matches[1]
+  catch
+    return ""
+  endtry
 
   return key
 endfunction
