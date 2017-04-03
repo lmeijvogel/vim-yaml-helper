@@ -8,7 +8,7 @@ This is a plugin that adds some methods for traversing Yaml files:
 - Getting the full path to the current element ( `:YamlGetFullPath` ),
 - Moving to an element, given the path ( `:YamlGoToKey` )
 
-By default root is not displayed, if you want to turn it on put this in your `.vimrc`:
+If you want to display root when using `:YamlGetFullPath`, put this in your `.vimrc`:
 ```
-let g:vim_yaml_helper_show_root = 0
+let g:vim_yaml_helper_show_root = 1
 ```
