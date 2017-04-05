@@ -2,6 +2,10 @@
 " Published methods
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+if !exists('g:vim_yaml_helper_show_root')
+  let g:vim_yaml_helper_show_root = 0
+end
+
 " Go to the first line with less indenting than the current one.
 " This only counts lines that start with a letter, so comments and
 " empty lines will be skipped.
@@ -31,6 +35,7 @@ function! s:GetFullPath()
     let parentFound = s:MoveToParent()
 
     if !parentFound
+      if g:vim_yaml_helper_show_root | call add(keys, key) | endif
       break
     endif
 
