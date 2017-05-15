@@ -13,6 +13,11 @@ If you want to display root when using `:YamlGetFullPath`, put this in your `.vi
 let g:vim_yaml_helper_show_root = 1
 ```
 
+To enable auto display of path to node under cursor put this in your `.vimrc`:
+```
+let g:vim_yaml_helper#auto_display_path = 1
+```
+
 ## Testing
 
 The plugin uses the vim-vspec plugin for testing. Add it to your vim bundle
