@@ -55,5 +55,20 @@ describe 'vim-yaml-helper'
         Expect getreg('"') == "aaa.ccc.ddd"
       end
     end
+
+    context 'regression'
+      it 'correctly handles multiple root elements'
+        put!= ['aaa:',
+             \ '  bbb: \"smart text\"',
+             \ 'ccc:',
+             \ '  ddd: \"tricky phrase\"']
+
+        normal! 2gg
+
+        YamlGetFullPath
+
+        Expect getreg('"') == "aaa.bbb"
+      end
+    end
   end
 end
