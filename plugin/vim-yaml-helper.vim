@@ -2,8 +2,8 @@
 " Published methods
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-if !exists('g:vim_yaml_helper_show_root')
-  let g:vim_yaml_helper_show_root = 0
+if !exists('g:vim_yaml_helper#always_get_root')
+  let g:vim_yaml_helper#always_get_root = 0
 end
 
 " Go to the first line with less indenting than the current one.
@@ -35,7 +35,6 @@ function! s:GetFullPath()
     let parentFound = s:MoveToParent()
 
     if !parentFound
-      if g:vim_yaml_helper_show_root | call add(keys, key) | endif
       break
     endif
 
@@ -219,7 +218,7 @@ endfunction
 function! s:OptionallyRemoveToplevelNode( keyParts )
   let toplevelNodes = s:GetNodesWithIndent(0)
 
-  if len(toplevelNodes) == 1
+  if len(toplevelNodes) == 1 && !g:vim_yaml_helper#always_get_root
     let toplevelNode = toplevelNodes[0]
 
     if a:keyParts[0] == toplevelNode
