@@ -57,6 +57,62 @@ describe 'vim-yaml-helper'
     end
   end
 
+  describe 'YamlDisplayFullPath'
+    before
+      put!= [ 'aaa:',
+           \ '  bbb: \"smart text\"',
+           \ '  ccc:',
+           \ '    ddd: \"tricky phrase\"']
+
+      let @@ = 'not affected'
+    end
+
+    it 'displays the path'
+      normal! 4gg
+
+      redir @x
+      YamlDisplayFullPath
+      redir END
+
+      Expect getreg("x") =~ "aaa.ccc.ddd"
+      Expect getreg('"') == "not affected"
+    end
+
+    context 'when the root element is skipped'
+      before
+        let g:vim_yaml_helper_show_root = 0
+      end
+
+      it 'copies the path except the root element'
+        normal! 4gg
+
+        redir @x
+        YamlDisplayFullPath
+        redir END
+
+        Expect getreg('"') == "not affected"
+        Expect getreg('x') =~ "ccc.ddd"
+      end
+    end
+
+    context 'when the root element is included'
+      before
+        let g:vim_yaml_helper_show_root = 1
+      end
+
+      it 'copies the whole path'
+        normal! 4gg
+
+        redir @x
+        YamlDisplayFullPath
+        redir END
+
+        Expect getreg('"') == "not affected"
+        Expect getreg('x') =~ "aaa.ccc.ddd"
+      end
+    end
+  end
+
   describe 'YamlGoToPath'
     before
       put!= [ 'aaa:',

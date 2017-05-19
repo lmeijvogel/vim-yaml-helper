@@ -23,8 +23,8 @@ function! s:GoToParent()
 endfunction
 
 " Get the full Yaml path of the current line.
-" This echoes the full path and also puts it in the default register so it can
-" be pasted.
+" This echoes the full path and optionally puts it in the default
+" register so it can be pasted.
 function! s:GetFullPath(copy_to_clipboard)
   let startPosition = getpos(".")
 
