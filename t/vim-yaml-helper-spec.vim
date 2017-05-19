@@ -10,49 +10,91 @@ describe 'vim-yaml-helper'
   end
 
   describe 'YamlGetFullPath'
-    before
-      put!= [ 'aaa:',
-           \ '  bbb: \"smart text\"',
-           \ '  ccc:',
-           \ '    ddd: \"tricky phrase\"']
-    end
-
-    it 'displays the path'
-      normal! 4gg
-
-      redir @x
-      YamlGetFullPath
-      redir END
-
-      Expect getreg("x") =~ "ccc.ddd"
-
-    end
-
-    context 'when the root element is skipped'
+    context 'with single root'
       before
-        let g:vim_yaml_helper_show_root = 0
+        put!= [ 'aaa:',
+             \ '  bbb: \"smart text\"',
+             \ '  ccc:',
+             \ '    ddd: \"tricky phrase\"']
       end
 
-      it 'copies the path except the root element'
+      it 'displays the path'
         normal! 4gg
-
+        redir @x
         YamlGetFullPath
+        redir END
 
-        Expect getreg('"') == "ccc.ddd"
+        Expect getreg("x") =~ "ccc.ddd"
+
+      end
+
+      context 'when the root element is skipped'
+        before
+          let g:vim_yaml_helper#always_get_root = 0
+        end
+
+        it 'copies the path except the root element'
+          normal! 4gg
+
+          YamlGetFullPath
+
+          Expect getreg('"') == "ccc.ddd"
+        end
+      end
+
+      context 'when the root element is included'
+        before
+          let g:vim_yaml_helper#always_get_root = 1
+        end
+
+        it 'copies the whole path'
+        " HERE
+          normal! 4gg
+
+          YamlGetFullPath
+
+          Expect getreg('"') == "aaa.ccc.ddd"
+        end
       end
     end
-
-    context 'when the root element is included'
+    context 'with multiple roots'
       before
-        let g:vim_yaml_helper_show_root = 1
+        put!= [ 'aaa:',
+              \ '  bbb: \"smart text\"',
+              \ 'ccc:',
+              \ '  ddd: \"tricky phrase\"']
       end
 
-      it 'copies the whole path'
+      it 'displays the path'
         normal! 4gg
-
+        redir @x
         YamlGetFullPath
+        redir END
+        Expect getreg("x") =~ "ddd"
+      end
 
-        Expect getreg('"') == "aaa.ccc.ddd"
+      context 'when the root element is skipped'
+        before
+          let g:vim_yaml_helper#always_get_root = 0
+        end
+
+        it 'copies the path except the root element'
+          normal! 4gg
+          YamlGetFullPath
+          Expect getreg('"') == "ccc.ddd"
+        end
+      end
+
+      context 'when the root element is included'
+        before
+          let g:vim_yaml_helper#always_get_root = 1
+        end
+
+        it 'copies the whole path'
+          normal! 4gg
+          YamlGetFullPath
+          Expect getreg('"') == "ccc.ddd"
+        end
       end
     end
   end
@@ -129,3 +171,4 @@ describe 'vim-yaml-helper'
     end
   end
 end
+
