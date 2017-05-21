@@ -5,6 +5,9 @@
 if !exists('g:vim_yaml_helper#always_get_root')
   let g:vim_yaml_helper#always_get_root = 0
 end
+if !exists('g:vim_yaml_helper#auto_display_path')
+  let g:vim_yaml_helper#auto_display_path = 0
+end
 
 " Go to the first line with less indenting than the current one.
 " This only counts lines that start with a letter, so comments and
@@ -22,7 +25,7 @@ endfunction
 " Get the full Yaml path of the current line.
 " This echoes the full path and also puts it in the default register so it can
 " be pasted.
-function! s:GetFullPath()
+function! s:GetFullPath(copy_to_clipboard)
   let startPosition = getpos(".")
 
   let keys = []
@@ -57,10 +60,12 @@ function! s:GetFullPath()
 
   call setpos(".", startPosition)
 
-  if &clipboard =~ '\<unnamed'
-    let @+ = result
-  else
-    let @@ = result
+  if a:copy_to_clipboard
+    if &clipboard =~ '\<unnamed'
+      let @+ = result
+    else
+      let @@ = result
+    endif
   endif
 
   echo result
@@ -263,5 +268,9 @@ function! s:GetNodesWithIndent( indent )
 endfunction
 
 command! YamlGoToParent call s:GoToParent()
-command! YamlGetFullPath call s:GetFullPath()
+command! YamlGetFullPath call s:GetFullPath(1)
+command! YamlDisplayFullPath call s:GetFullPath(0)
 command! -nargs=1 YamlGoToKey call s:GoToKey("<args>")
+if g:vim_yaml_helper#auto_display_path
+  autocmd! CursorHold *.yml YamlDisplayFullPath
+end
