@@ -2,13 +2,6 @@
 " Published methods
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-if !exists('g:vim_yaml_helper#always_get_root')
-  let g:vim_yaml_helper#always_get_root = 0
-end
-if !exists('g:vim_yaml_helper#auto_display_path')
-  let g:vim_yaml_helper#auto_display_path = 0
-end
-
 " Go to the first line with less indenting than the current one.
 " This only counts lines that start with a letter, so comments and
 " empty lines will be skipped.
@@ -223,7 +216,7 @@ endfunction
 function! s:OptionallyRemoveToplevelNode( keyParts )
   let toplevelNodes = s:GetNodesWithIndent(0)
 
-  if len(toplevelNodes) == 1 && !g:vim_yaml_helper#always_get_root
+  if len(toplevelNodes) == 1 && !get(g:, 'vim_yaml_helper#always_get_root', 0)
     let toplevelNode = toplevelNodes[0]
 
     if a:keyParts[0] == toplevelNode
@@ -267,10 +260,18 @@ function! s:GetNodesWithIndent( indent )
   return result
 endfunction
 
-command! YamlGoToParent call s:GoToParent()
-command! YamlGetFullPath call s:GetFullPath(1)
-command! YamlDisplayFullPath call s:GetFullPath(0)
-command! -nargs=1 YamlGoToKey call s:GoToKey("<args>")
-if g:vim_yaml_helper#auto_display_path
-  autocmd! CursorHold *.yml YamlDisplayFullPath
-end
+function! s:commands()
+	command! -buffer YamlGoToParent call s:GoToParent()
+	command! -buffer YamlGetFullPath call s:GetFullPath(1)
+	command! -buffer YamlDisplayFullPath call s:GetFullPath(0)
+	command! -buffer -nargs=1 YamlGoToKey call s:GoToKey("<args>")
+endfunction
+
+augroup vim-yaml-helper
+	autocmd!
+	autocmd Filetype yaml call s:commands()
+
+	if get(g:, 'vim_yaml_helper#auto_display_path', 1)
+		autocmd CursorHold *.yml,*.yaml YamlDisplayFullPath
+	end
+augroup end
